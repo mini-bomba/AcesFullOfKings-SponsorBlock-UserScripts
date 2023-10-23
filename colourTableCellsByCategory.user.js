@@ -1,16 +1,15 @@
 // ==UserScript==
 // @name          Coloured Categories
 // @description   Adds category colours to Category column sb.ltn.fi
-// @version       1.1.2
-// @author        ChatGPT, AcesFullOfKings, TheJzoli
-// @grant         none
+// @version       1.3.2
+// @author        ChatGPT, AcesFullOfKings, TheJzoli, mini_bomba
+// @grant         GM_setValue
+// @grant         GM_getValue
 // @match         https://sb.ltn.fi/*
 // @updateURL     https://raw.githubusercontent.com/AcesFullOfKings/SponsorBlock-UserScripts/main/colourTableCellsByCategory.user.js
 // @downloadURL   https://raw.githubusercontent.com/AcesFullOfKings/SponsorBlock-UserScripts/main/colourTableCellsByCategory.user.js
 // @icon          https://sb.ltn.fi/static/browser/logo.png
 // ==/UserScript==
-
-/* eslint-disable no-multi-spaces */
 
 (function() {
   'use strict';
@@ -28,47 +27,87 @@
     chapter: '#ffd679',
   };
 
+  // Find the Category column, save its index
+  const columnHeads = document.querySelector("table thead tr").children;
+  let categoryColIndex = -1;
+  for (const i in columnHeads) {
+    if (columnHeads[i].innerText == "Category") {
+      categoryColIndex = Number(i); // i love javascript
+      break;
+    }
+  }
+  if (categoryColIndex == -1) {
+    throw Error("Coloured Categories: Failed to find the Category column");
+  }
+
+  // Generate and install CSS styles for the squares
+  let cssCode = `
+    #sbbcc-radius {
+      order: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .categoryCell::before {
+      content: " ";
+      width: 0.75em;
+      height: 0.75em;
+      margin-right: 0.25em;
+      border-radius: var(--sbbcc-radius, 0);
+      display: inline-block;
+    }
+  `
+  for (const [name, color] of Object.entries(COLOURS)) {
+    cssCode += `
+      .categoryCell[data-category="${name}"]::before {
+        background-color: ${color};
+      }
+    `
+  }
+  const styleElement = document.createElement("style");
+  styleElement.innerHTML = cssCode;
+  styleElement.id = "sbbcc-styles";
+  document.head.appendChild(styleElement);
+
   const table = document.querySelector('.table');
   const headerRow = table.querySelector('thead tr');
   const headerCells = headerRow.querySelectorAll('th');
 
-  // The columns aren't always in a fixed order, e.g. they're different on user pages vs video pages
-  // And also the order can be changed with userscripts etc. So instead of using column 7 (the default on video pages),
-  // we find the correct column number from the table header:
+  // Create a global slider for border radius in the navbar
+  const sliderContainer = document.createElement('div');
+  sliderContainer.id = "sbbcc-radius";
+  const sliderLabel = document.createElement("label");
+  sliderLabel.for = "sbbcc-radius-slider";
+  sliderLabel.innerText = "Category label radius:"
+  sliderContainer.appendChild(sliderLabel);
+  const slider = document.createElement("input");
+  slider.type="range";
+  slider.id="sbbcc-radius-slider";
+  slider.value = GM_getValue("radius", 0); // read previous stored radius preference from storage
+  slider.min = 0;
+  slider.max = 50;
+  slider.step = 0.5;
+  sliderContainer.appendChild(slider);
+  document.querySelector('nav > div').appendChild(sliderContainer);
+  document.body.style.setProperty("--sbbcc-radius", `${slider.value}%`); // set the radius variable for the first time
 
-  var columnNumber = 0;
-  var found = false;
-
-  headerCells.forEach((cell) => {
-      if (!found){
-          if (cell.innerText == "Category") {
-              found = true;
-          } else {
-              columnNumber += 1;
-          }
-      }
+  slider.addEventListener('input', () => {
+    document.body.style.setProperty("--sbbcc-radius", `${slider.value}%`);
+    GM_setValue("radius", slider.value);  // save radius preference
   });
 
-  addSquare();
-
-  function addSquare() {
-    const rows = table.querySelectorAll('tbody tr'); // a list of the table rows
-
-    rows.forEach((row) => {
-      const categoryCell = row.querySelectorAll('td')[columnNumber]; // select the correct column
-      let category = categoryCell.innerText.split("\n")[0]; // sometimes userscripts add a line below the category text, e.g. for a button
-      if (category.charAt(0) === "■") category = category.substring(1);
-
-      if (category in COLOURS) {
-        var newSpan = document.createElement('span');
-        newSpan.id = "colorSquare";
-        newSpan.innerHTML = "■"; // cute lil square
-        newSpan.setAttribute('style', 'color:' + COLOURS[category]);
-        categoryCell.querySelector('#colorSquare')?.remove();
-        categoryCell.prepend(newSpan); // add to beginning of cell
+  function markCells() {
+    // Find all category cells with CSS selectors
+    for (const cell of document.querySelectorAll(`td:nth-child(${categoryColIndex+1})`)) {
+      cell.classList.add("categoryCell");
+      for (const node of cell.childNodes) {
+        if (node.nodeName != "#text") continue;  // search for the first child text node, to avoid extracting strings from other userscripts
+        cell.setAttribute("data-category", node.textContent);
+        break;
       }
-    });
+    }
   }
 
-  document.addEventListener('forceRefresh', () => addSquare());
+  // Mark category cells with appropriate classes and attributes
+  markCells();
+  document.addEventListener('forceRefresh', markCells);
 })();
