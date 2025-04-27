@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Coloured Categories
 // @description   Adds category colours to Category column sb.ltn.fi
-// @version       1.1.3
+// @version       1.1.4
 // @author        ChatGPT, AcesFullOfKings, TheJzoli, Violet
 // @grant         none
 // @match         https://sb.ltn.fi/*
@@ -26,6 +26,7 @@
     poi_highlight: '#ff1684',   // kinda salmon-y pink idk
     exclusive_access: '#008a5c',// kinda murky greeny grey ish
     chapter: '#ffd679',
+    music_offtopic: "#FF9900",
   };
 
   const table = document.querySelector('.table');
@@ -64,9 +65,8 @@
         newSpan.id = 'colorSquare';
         newSpan.style.display = 'inline-block';
         newSpan.style.position = 'relative';
-        newSpan.style.bottom = '0.15em';
-        newSpan.style.width = '0.5em';
-        newSpan.style.height = '0.5em';
+        newSpan.style.width = '0.75em';
+        newSpan.style.height = '0.75em';
         newSpan.style.marginRight = '0.3em';
         newSpan.style.borderRadius = '2px';
         newSpan.style.backgroundColor = COLOURS[category];
