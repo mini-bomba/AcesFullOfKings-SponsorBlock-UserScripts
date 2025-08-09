@@ -27,6 +27,7 @@
     exclusive_access: '#008a5c',// kinda murky greeny grey ish
     chapter: '#ffd679',
     music_offtopic: "#FF9900",
+    hook: "#395699",
   };
 
   const table = document.querySelector('.table');
