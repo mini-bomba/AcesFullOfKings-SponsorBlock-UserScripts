@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name          Coloured Categories
 // @description   Adds category colours to Category column sb.ltn.fi
-// @version       1.1.4
-// @author        ChatGPT, AcesFullOfKings, TheJzoli, Violet
+// @version       1.1.5
+// @author        ChatGPT, AcesFullOfKings, TheJzoli, Violet, gijsdev
 // @grant         none
 // @match         https://sb.ltn.fi/*
 // @updateURL     https://raw.githubusercontent.com/AcesFullOfKings/SponsorBlock-UserScripts/main/colourTableCellsByCategory.user.js
