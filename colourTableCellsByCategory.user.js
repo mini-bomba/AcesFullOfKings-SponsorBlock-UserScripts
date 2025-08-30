@@ -6,8 +6,8 @@
 // @grant         GM_setValue
 // @grant         GM_getValue
 // @match         https://sb.ltn.fi/*
-// @updateURL     https://raw.githubusercontent.com/AcesFullOfKings/SponsorBlock-UserScripts/main/colourTableCellsByCategory.user.js
-// @downloadURL   https://raw.githubusercontent.com/AcesFullOfKings/SponsorBlock-UserScripts/main/colourTableCellsByCategory.user.js
+// @updateURL     https://raw.githubusercontent.com/mini-bomba/AcesFullOfKings-SponsorBlock-UserScripts/rewrite/colourTableCellsByCategory.user.js
+// @downloadURL   https://raw.githubusercontent.com/mini-bomba/AcesFullOfKings-SponsorBlock-UserScripts/rewrite/colourTableCellsByCategory.user.js
 // @icon          https://sb.ltn.fi/static/browser/logo.png
 // ==/UserScript==
 
@@ -25,6 +25,7 @@
     poi_highlight: '#ff1684',   // kinda salmon-y pink idk
     exclusive_access: '#008a5c',// kinda murky greeny grey ish
     chapter: '#ffd679',
+    hook: '#395699',
   };
 
   // Find the Category column, save its index
