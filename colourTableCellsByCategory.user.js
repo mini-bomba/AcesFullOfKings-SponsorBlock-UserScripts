@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Coloured Categories
 // @description   Adds category colours to Category column sb.ltn.fi
-// @version       1.3.2
+// @version       1.3.3
 // @author        ChatGPT, AcesFullOfKings, TheJzoli, mini_bomba
 // @grant         GM_setValue
 // @grant         GM_getValue
